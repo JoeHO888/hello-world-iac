@@ -20,4 +20,5 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: ./.terraform
       - name: Set private key as github secret
-        run: terraform output private_key | xargs gh secret set VM_SSH_KEY --body
+        run: terraform output private_key | gh secret set VM_SSH_KEY
+      
