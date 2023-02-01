@@ -9,6 +9,7 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      GITHUB_TOKEN: ${{ secrets.TOKEN }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -18,3 +19,5 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./.terraform
+      - name: Set private key as github secret
+        run: terraform output private_key | xargs gh secret set VM_SSH_KEY --body
