@@ -29,6 +29,7 @@ jobs:
     outputs:
       hostname: ${{ steps.set_vm_hostname_as_output.outputs.hostname }}
   Install_K3S:
+    needs: Provision_VM
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
