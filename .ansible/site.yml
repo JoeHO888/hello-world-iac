@@ -1,0 +1,9 @@
+---
+
+- hosts: all
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: prereq
+    - role: download
+    - role: k3s/master
