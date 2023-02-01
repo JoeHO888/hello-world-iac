@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Check out repository code
+      - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2        
       - name: Initialize Terraform
         run: terraform init
