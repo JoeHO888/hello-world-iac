@@ -40,17 +40,15 @@ jobs:
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
-        # Required, playbook filepath
-        playbook: site.yml
-        # Optional, directory where playbooks live
-        directory: ./.ansible
-        # Optional, SSH private key
-        key: ${{secrets.VM_SSH_KEY}}
-        # Optional, additional flags to pass to ansible-playbook
-        options: |
-          --inventory "${{ needs.Provision_VM.outputs.hostname }},"
-          --user ubuntu
-          --extra-vars ${{ needs.Provision_VM.outputs.hostname }} k3s_version=v1.23.16+k3s1 systemd_dir=/etc/systemd/system
-          --verbose
-          - name: Run ansible playbook to install K3S
-          run: ansible-playbook site.yml --extra-vars "master_ip=ec2-3-226-140-165.compute-1.amazonaws.com " -i "ec2-3-226-140-165.compute-1.amazonaws.com,"      
+          # Required, playbook filepath
+          playbook: site.yml
+          # Optional, directory where playbooks live
+          directory: ./.ansible
+          # Optional, SSH private key
+          key: ${{secrets.VM_SSH_KEY}}
+          # Optional, additional flags to pass to ansible-playbook
+          options: |
+            --inventory "${{ needs.Provision_VM.outputs.hostname }},"
+            --user ubuntu
+            --extra-vars ${{ needs.Provision_VM.outputs.hostname }} k3s_version=v1.23.16+k3s1 systemd_dir=/etc/systemd/system
+            --verbose     
