@@ -51,5 +51,5 @@ jobs:
           options: |
             --inventory "${{ needs.Provision_VM.outputs.hostname }},"
             --user ubuntu
-            --extra-vars ${{ needs.Provision_VM.outputs.hostname }} k3s_version=v1.23.16+k3s1 systemd_dir=/etc/systemd/system
+            --extra-vars "${{ needs.Provision_VM.outputs.hostname }} k3s_version=v1.23.16+k3s1 systemd_dir=/etc/systemd/system"
             --verbose     
