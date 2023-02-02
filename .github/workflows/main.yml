@@ -21,10 +21,10 @@ jobs:
         working-directory: ./.terraform
       - name: Set private key as github secret
         run: terraform output private_key | gh secret set VM_SSH_KEY
+        working-directory: ./.terraform
       - name: Set VM hostname as output
-        run: |
-          export HOSTNAME="$(terraform output hostname)"
-          echo "::set-output name=hostname::${HOSTNAME}"
+        run: echo hostname="$( terraform-bin output hostname )" >> $GITHUB_OUTPUT
         id: set_vm_hostname_as_output
+        working-directory: ./.terraform
     outputs:
       hostname: ${{ steps.set_vm_hostname_as_output.outputs.hostname }}
