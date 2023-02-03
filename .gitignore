@@ -2,3 +2,6 @@
 
 .terraform/.terraform/*
 *.hcl
+
+# Local environment variables
+*.env
