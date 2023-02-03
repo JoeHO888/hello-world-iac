@@ -145,7 +145,7 @@ resource "aws_instance" "k3s" {
 }
 
 output "private_key" {
-  value     = tls_private_key.ssh_key_pair.private_key_pem
+  value     = tls_private_key.ssh_key_pair.private_key_openssh
   sensitive = true
 }
 
