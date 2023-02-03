@@ -23,14 +23,14 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "tls_private_key" "ssh_key_pair" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
+variable "public_key_path" {
+  type = string
+  default = "./aws_ec2_key.pub.pem"
 }
 
 resource "aws_key_pair" "ec2_key" {
   key_name   = "k3s_ssh_key"
-  public_key = tls_private_key.ssh_key_pair.public_key_openssh
+  public_key = "${file(var.public_key_path)}"
 }
 
 resource "aws_vpc" "k3s_vpc" {
@@ -142,11 +142,6 @@ resource "aws_instance" "k3s" {
   tags = {
     Name = "k3s"
   }
-}
-
-output "private_key" {
-  value     = tls_private_key.ssh_key_pair.private_key_openssh
-  sensitive = true
 }
 
 output "hostname" {
