@@ -19,6 +19,11 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./.terraform
+      - name: Set private key as github secret
+        run: |
+          terraform-bin output --raw private_key > ./private_key
+          gh secret set VM_SSH_KEY < ./private_key
+        working-directory: ./.terraform
       - name: Set VM hostname as output
         run: echo hostname="$( terraform-bin output hostname )" >> $GITHUB_OUTPUT
         id: set_vm_hostname_as_output
@@ -49,4 +54,4 @@ jobs:
             --inventory "${{ needs.Provision_VM.outputs.hostname }},"
             --user ubuntu
             --extra-vars "master_ip=${{ needs.Provision_VM.outputs.hostname }} k3s_version=v1.23.16+k3s1 systemd_dir=/etc/systemd/system"
-            --verbose         
+            --verbose   
