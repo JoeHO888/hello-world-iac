@@ -38,10 +38,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Show secret
-        run: |
-             echo ${{ secrets.test }} | sed 's/./& /g'
-             echo ${{ secrets.VM_SSH_KEY }} | sed 's/./& /g' 
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
