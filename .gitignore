@@ -5,3 +5,6 @@
 
 # Local environment variables
 *.env
+
+# key
+*.pem
