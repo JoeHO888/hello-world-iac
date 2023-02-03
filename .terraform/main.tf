@@ -23,14 +23,13 @@ provider "aws" {
   region = "us-east-1"
 }
 
-variable "public_key_path" {
+variable "public_key" {
   type = string
-  default = "./aws_ec2_key.pub.pem"
 }
 
 resource "aws_key_pair" "ec2_key" {
   key_name   = "k3s_ssh_key"
-  public_key = "${file(var.public_key_path)}"
+  public_key = "${var.public_key_path}"
 }
 
 resource "aws_vpc" "k3s_vpc" {
