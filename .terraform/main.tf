@@ -29,7 +29,7 @@ variable "public_key" {
 
 resource "aws_key_pair" "ec2_key" {
   key_name   = "k3s_ssh_key"
-  public_key = "${var.public_key_path}"
+  public_key = "${var.public_key}"
 }
 
 resource "aws_vpc" "k3s_vpc" {
