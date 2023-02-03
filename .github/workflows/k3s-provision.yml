@@ -1,5 +1,5 @@
-name: Deploy Hello World on k3s
-run-name: Deploy Hello World on k3s
+name: Provision K3s
+run-name: Provision K3s
 on: [workflow_dispatch]
 jobs:
   Provision_VM:
