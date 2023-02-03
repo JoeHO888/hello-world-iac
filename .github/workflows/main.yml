@@ -19,9 +19,6 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./.terraform
-      - name: Set private key as github secret
-        run: terraform-bin output --raw private_key | gh secret set VM_SSH_KEY
-        working-directory: ./.terraform
       - name: Set VM hostname as output
         run: echo hostname="$( terraform-bin output hostname )" >> $GITHUB_OUTPUT
         id: set_vm_hostname_as_output
