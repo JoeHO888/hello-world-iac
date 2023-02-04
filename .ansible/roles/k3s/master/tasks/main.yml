@@ -77,3 +77,10 @@
     src: /usr/local/bin/k3s
     dest: /usr/local/bin/crictl
     state: link
+
+# Copy kube config
+- name: Copy config file to user home directory
+  fetch:
+    src: ~{{ ansible_user }}/.kube/config
+    dest: ./.kube.config    
+    flat: yes
