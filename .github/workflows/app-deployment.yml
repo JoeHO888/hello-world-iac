@@ -1,0 +1,27 @@
+name: Deploy Hello World App
+run-name: Deploy Hello World App
+on:
+  workflow_run:
+    workflows: ["Provision K3s"]
+    types:
+      - completed
+  workflow_dispatch: 
+jobs:
+  Deploy_App:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Create config map # which will be used by the app
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.BASE64_KUBE_CONFIG }}
+        with:
+          args: create configmap hello-world --from-file index.html --insecure-skip-tls-verify # Ignore TLS because of self-signed certificate
+      - name: Create app
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.BASE64_KUBE_CONFIG }}
+        with:
+          args: apply -f ./.kubernetes/hello-world.yml --insecure-skip-tls-verify # Ignore TLS because of self-signed certificate
+        
