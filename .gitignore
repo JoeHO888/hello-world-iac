@@ -8,3 +8,6 @@
 
 # key
 *.pem
+
+# Base64 kube config
+.base64_kube.config
