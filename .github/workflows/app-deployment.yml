@@ -12,16 +12,19 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Create config map # which will be used by the app
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.BASE64_KUBE_CONFIG }}
-        with:
-          args: create configmap hello-world --from-file index.html --insecure-skip-tls-verify # Ignore TLS because of self-signed certificate
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        id: install
+      - name: Save decoded kube config
+        run: |
+          echo "${{ secrets.BASE64_KUBE_CONFIG }}" > ./.base64.kube.config
+          mkdir $HOME/.kube
+          base64 -d ./.base64.kube.config > $HOME/.kube/config
+      - name: Create config map
+        # Ignore TLS because of self-signed certificate
+        run: |
+          kubectl create configmap hello-world --from-file index.html -o yaml --dry-run=client --insecure-skip-tls-verify > configMap.yml
+          kubectl apply -f configMap.yml --insecure-skip-tls-verify
       - name: Create app
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.BASE64_KUBE_CONFIG }}
-        with:
-          args: apply -f ./.kubernetes/hello-world.yml --insecure-skip-tls-verify # Ignore TLS because of self-signed certificate
-        
+        # Ignore TLS because of self-signed certificate
+        run: kubectl apply -f ./.kubernetes/hello-world.yml --insecure-skip-tls-verify
