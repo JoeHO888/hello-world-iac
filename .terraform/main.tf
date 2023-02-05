@@ -49,14 +49,6 @@ resource "aws_subnet" "k3s_subnet" {
 }
 
 
-resource "aws_eip_association" "eip_assoc" {
-  instance_id   = aws_instance.k3s.id
-  allocation_id = aws_eip.elastic_ip.id
-}
-
-resource "aws_eip" "elastic_ip" {
-}
-
 resource "aws_internet_gateway" "k3s_gw" {
   vpc_id = aws_vpc.k3s_vpc.id
 
@@ -146,6 +138,7 @@ resource "aws_instance" "k3s" {
   key_name               = aws_key_pair.ec2_key.key_name
   subnet_id              = aws_subnet.k3s_subnet.id
   vpc_security_group_ids = [aws_security_group.security_group.id]
+  associate_public_ip_address = true
 
   tags = {
     Name = "k3s"
@@ -153,9 +146,9 @@ resource "aws_instance" "k3s" {
 }
 
 output "hostname" {
-  value = aws_eip.elastic_ip.public_dns
+  value = aws_instance.k3s.public_dns
 }
 
 output "ip" {
-  value = aws_eip.elastic_ip.public_ip
+  value = aws_instance.k3s.public_ip
 }
