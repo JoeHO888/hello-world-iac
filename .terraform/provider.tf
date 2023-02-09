@@ -11,7 +11,6 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "devops.joeho.xyz"
     key    = "hello-world/terraform.tfstate"
     region = "us-east-1"
   }
