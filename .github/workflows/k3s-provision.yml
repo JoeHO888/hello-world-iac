@@ -15,9 +15,16 @@ jobs:
         uses: hashicorp/setup-terraform@v2
       - name: Initialize Terraform
         run: terraform init -backend-config="bucket=${{ secrets.TERRAFORM_BUCKET }}"
-        working-directory: ./.terraform        
+        working-directory: ./.terraform
       - name: Terraform Apply
-        run: terraform apply -var public_key="${{ secrets.SSH_PUBLIC_KEY }}" -auto-approve
+        run: |
+          terraform apply \
+          -var public_key="${{ secrets.SSH_PUBLIC_KEY }}" \
+          -var cloudflare_zone="${{ secrets.CLOUDFLARE_ZONE }}" \
+          -var cloudflare_api_token="${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+          -var subdomain="${{ secrets.SUBDOMAIN }}" \
+          -var is_https=${{ secrets.IS_HTTPS }} \
+          -auto-approve
         working-directory: ./.terraform
       - name: Set VM hostname as output
         run: echo hostname="$( terraform-bin output hostname )" >> $GITHUB_OUTPUT
