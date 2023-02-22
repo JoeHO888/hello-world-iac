@@ -1,0 +1,30 @@
+{{ if .Values.is_https }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cert-manager
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: le-http
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  acme:
+    email: {{ .Values.email }}
+    {{- $le_url := .Values.le_staging_url -}}
+    {{ if .Values.is_prod }}
+    {{- $le_url = .Values.le_prod_url -}}
+    {{ end}}
+    server: {{ $le_url }}
+    privateKeySecretRef:
+      # if not existing, it will register a new account and stores it
+      name: {{ tpl .Values.account_key . }}
+    solvers:
+      - http01:
+          # The ingressClass used to create the necessary ingress routes
+          ingress:
+            class: traefik
+{{ end }}

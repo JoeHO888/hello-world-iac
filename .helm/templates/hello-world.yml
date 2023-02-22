@@ -1,0 +1,89 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+  {{ if .Values.is_https }}    
+    cert-manager.io/issuer: "le-http"
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
+  {{ end }}
+spec:
+{{ if .Values.is_https }}  
+  tls:
+    - hosts:
+        - {{ .Values.domain }}
+      secretName: {{ tpl .Values.secret_name . }}
+{{ end }}
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Chart.Name }}
+            port:
+              number: 80
+  {{ if .Values.is_https }}  
+    host: {{ .Values.domain }}
+  {{ end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+  selector:
+    app:  {{ .Chart.Name }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-nginx
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: {{ .Chart.Name }}-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: {{ .Chart.Name }}-volume
+        configMap:
+          name: {{ .Chart.Name }}
+---
+apiVersion: v1
+data:
+  index.html:
+{{ .Values.index_file | indent 4}}
+kind: ConfigMap
+metadata:
+  name: hello-world
+---
+{{ if .Values.is_https }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-https
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+{{ end }}

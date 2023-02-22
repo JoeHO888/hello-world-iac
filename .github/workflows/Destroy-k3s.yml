@@ -17,5 +17,12 @@ jobs:
         run: terraform init -backend-config="bucket=${{ secrets.TERRAFORM_BUCKET }}"
         working-directory: ./.terraform        
       - name: Terraform Destroy
-        run: terraform destroy -var public_key="${{ secrets.SSH_PUBLIC_KEY }}" -auto-approve
+        run: |
+          terraform destroy \
+          -var public_key="${{ secrets.SSH_PUBLIC_KEY }}" \
+          -var cloudflare_zone="${{ secrets.CLOUDFLARE_ZONE }}" \
+          -var cloudflare_api_token="${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+          -var subdomain="${{ secrets.SUBDOMAIN }}" \
+          -var is_https=${{ secrets.IS_HTTPS }} \
+          -auto-approve
         working-directory: ./.terraform
