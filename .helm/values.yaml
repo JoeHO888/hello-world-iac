@@ -1,0 +1,15 @@
+# Default values for hello-world-iac.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+le_staging_url: "https://acme-staging-v02.api.letsencrypt.org/directory"
+le_prod_url: "https://acme-v02.api.letsencrypt.org/directory"
+account_key: '{{ .Values.domain | replace "." "-" }}-account-key'
+secret_name: '{{ .Values.domain | replace "." "-" }}-ingress-http-secret'
+
+cert-manager:
+  namespace: "cert-manager"
+  installCRDs: true
+  
+

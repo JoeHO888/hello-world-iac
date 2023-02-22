@@ -11,3 +11,7 @@
 
 # Base64 kube config
 .base64_kube.config
+
+# Helm
+*.tgz
+Chart.lock
