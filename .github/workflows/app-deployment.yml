@@ -12,19 +12,25 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v3
-        id: install
+      - name: Install Helm
+        uses: azure/setup-helm@v3
       - name: Save decoded kube config
         run: |
           echo "${{ secrets.BASE64_KUBE_CONFIG }}" > ./.base64.kube.config
           mkdir $HOME/.kube
           base64 -d ./.base64.kube.config > $HOME/.kube/config
-      - name: Create config map
-        # Ignore TLS because of self-signed certificate
+      - name: Helm Build Dependencies
+        run: helm dependency build
+        working-directory: ./.helm
+      - name: Helm Deploy
+        # Skip TLS verification because we are using a self-signed certificate
+        # Install Cert manager only if we are using HTTPS
         run: |
-          kubectl create configmap hello-world --from-file index.html -o yaml --dry-run=client --insecure-skip-tls-verify > configMap.yml
-          kubectl apply -f configMap.yml --insecure-skip-tls-verify
-      - name: Create app
-        # Ignore TLS because of self-signed certificate
-        run: kubectl apply -f ./.kubernetes/hello-world.yml --insecure-skip-tls-verify
+          helm install --insecure-skip-tls-verify hello-world --wait \
+          --set-file "index_file=index.html" \
+          --set is_https=${{ secrets.IS_HTTPS }} \
+          --set cert-manager.enabled=${{ secrets.IS_HTTPS }} \
+          --set email="${{ secrets.EMAIL }}" \
+          --set domain="${{ secrets.DOMAIN }}" \
+          --set is_prod=${{ secrets.IS_PROD }} \
+          ./.helm/
